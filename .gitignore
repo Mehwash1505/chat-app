@@ -25,3 +25,4 @@ dist-ssr
 
 
 src/firebase.js
+src/firebase/firebaseConfig.jsx
