@@ -7,6 +7,7 @@ import MessageInput from "./MessageInput";
 
 export default function ChatWindow() {
   const [messages, setMessages] = useState([]);
+  const [typing, setTyping] = useState(false);
   const { user } = useAuth();
 
   // 👇 AUTO SCROLL ke liye ref
@@ -35,6 +36,16 @@ export default function ChatWindow() {
     return () => unsubscribe();
   }, []);
 
+
+  useEffect(() => {
+    const typingRef = ref(db, "typing");
+
+    onValue(typingRef, (snapshot) => {
+      const data = snapshot.val();
+      setTyping(Boolean(data));
+    });
+  }, []);
+
   // 🔹 Auto scroll jab bhi messages change ho
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,8 +54,16 @@ export default function ChatWindow() {
   return (
     <div className="flex flex-col flex-1">
       {/* Header */}
-      <div className="p-4 border-b bg-white font-semibold">
-        Chat
+      <div className="p-4 border-b bg-white dark:bg-gray-900 flex items-center justify-between">
+        <div>
+          <p className="font-semibold text-black dark:text-white">Ayesha</p>
+          <p className="text-xs text-green-500">online</p>
+        </div>
+
+        <div className="flex gap-3 text-gray-400 cursor-pointer">
+          <span>🔍</span>
+          <span>⋮</span>
+        </div>
       </div>
 
       {/* Messages area */}
@@ -68,6 +87,12 @@ export default function ChatWindow() {
         {/* 👇 invisible div for auto scroll */ }
         <div ref={bottomRef} />
       </div>
+
+      {typing && (
+        <p className="text-xs text-gray-400 italic mt-2">
+          typing...
+        </p>
+      )}
 
       {/* Input */}
       <MessageInput />
