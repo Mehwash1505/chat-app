@@ -3,7 +3,7 @@ import { ref, onValue } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
-
+import Avatar from "../Avatar";
 
 const users = [
   { id: "user1", name: "Ayesha" },
@@ -11,8 +11,13 @@ const users = [
   { id: "user3", name: "Zoya" },
 ];
 
-export default function UserList() {
+export default function UserList( { setActiveUser } ) {
   const [presence, setPresence] = useState({});
+
+  <div
+    onClick={() => setActiveUser(user)}
+    className="px-4 py-3 cursor-pointer hover:bg-gray-100"
+  ></div>
 
   useEffect(() => {
     const presenceRef = ref(db, "presence");
@@ -43,11 +48,12 @@ export default function UserList() {
             className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition flex justify-between items-center cursor-pointer text-black dark:text-white"
           >
             {/* Left side: name + last message */}
-            <div>
-              <p className="font-medium">{user.name}</p>
-              <p className="text-xs text-gray-400">
-                last message...
-              </p>
+            <div className="flex gap-3 items-center">
+              <Avatar name={user.name} />
+              <div>
+                <p className="font-medium">{user.name}</p>
+                <p className="text-xs text-gray-400">last message...</p>
+              </div>
             </div>
         
             {/* Right side: online status */}
