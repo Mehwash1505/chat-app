@@ -26,12 +26,12 @@ export default function UserList() {
     <div className="w-64 bg-white border-r">
       <h2 className="p-4 font-semibold text-lg">Chats</h2>
 
-      {/* <button
+      <button
        onClick={() => signOut(auth)}
         className="text-sm text-red-500 hover:underline"
       >
         Logout
-      </button> */}
+      </button>
 
 
       {users.map((user) => {
