@@ -14,7 +14,7 @@ export default function Message({ message }) {
         className={`px-4 py-2 rounded-lg max-w-xs ${
           isMe
             ? "bg-blue-500 text-white"
-            : "bg-white border"
+            : "bg-white dark:bg-gray-900 border"
         }`}
       >
         <p>{message.text}</p>
