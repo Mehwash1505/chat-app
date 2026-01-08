@@ -21,6 +21,15 @@ export default function Message({ message }) {
         <p className="text-[10px] text-right opacity-70 mt-1">
           {time}
         </p>
+        {isMe && (
+          <span className={`text-xs ml-2 ${
+            message.status === "seen" ? "text-blue-500" : "text-gray-400"
+          }`}>
+            {message.status === "sent" && "✔"}
+            {message.status === "delivered" && "✔✔"}
+            {message.status === "seen" && "✔✔"}
+          </span>
+        )}
       </div>
     </div>
   );
