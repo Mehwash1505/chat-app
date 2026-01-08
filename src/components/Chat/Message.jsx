@@ -1,6 +1,13 @@
 export default function Message({ message }) {
   const isMe = message.sender === "me";
 
+  const time = message.timestamp
+    ? new Date(message.timestamp).toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : "";
+
   return (
     <div className={`flex mb-2 ${isMe ? "justify-end" : "justify-start"}`}>
       <div
@@ -10,7 +17,10 @@ export default function Message({ message }) {
             : "bg-white border"
         }`}
       >
-        {message.text}
+        <p>{message.text}</p>
+        <p className="text-[10px] text-right opacity-70 mt-1">
+          {time}
+        </p>
       </div>
     </div>
   );
