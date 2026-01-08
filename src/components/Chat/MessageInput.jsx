@@ -20,7 +20,9 @@ export default function MessageInput() {
     await push(messagesRef, {
       text,
       senderId: user.uid,
+      receiverId: activeUser.uid,
       timestamp: serverTimestamp(),
+      status: "sent",
     });
     
     await set(ref(db, `typing/${user.uid}`), false);
