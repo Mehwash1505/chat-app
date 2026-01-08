@@ -23,8 +23,8 @@ export default function UserList() {
   }, []);
 
   return (
-    <div className="w-64 bg-white border-r">
-      <h2 className="p-4 font-semibold text-lg">Chats</h2>
+    <div className="w-64 bg-white dark:bg-gray-900 border-r">
+      <h2 className="p-4 font-semibold text-lg text-black dark:text-white">Chats</h2>
 
       <button
        onClick={() => signOut(auth)}
@@ -40,9 +40,17 @@ export default function UserList() {
         return (
           <div
             key={user.id}
-            className="px-4 py-3 flex justify-between items-center hover:bg-gray-100"
+            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition flex justify-between items-center cursor-pointer text-black dark:text-white"
           >
-            <span>{user.name}</span>
+            {/* Left side: name + last message */}
+            <div>
+              <p className="font-medium">{user.name}</p>
+              <p className="text-xs text-gray-400">
+                last message...
+              </p>
+            </div>
+        
+            {/* Right side: online status */}
             <span
               className={`h-2 w-2 rounded-full ${
                 isOnline ? "bg-green-500" : "bg-gray-400"
