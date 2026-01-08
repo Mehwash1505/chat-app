@@ -5,17 +5,25 @@ import { useAuth } from "../../context/AuthContext";
 import Message from "./Message";
 import MessageInput from "./MessageInput";
 
-export default function ChatWindow() {
+export default function ChatWindow({ activeUser }) {
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
   const { user } = useAuth();
+
+  if (!activeUser) {
+    return <p className="p-4">Select a chat</p>;
+  }
+
+  const chatId = [user.uid, activeUser.id]
+    .sort()
+    .join("_");
 
   // 👇 AUTO SCROLL ke liye ref
   const bottomRef = useRef(null);
 
   // 🔹 Realtime messages listener
   useEffect(() => {
-    const messagesRef = ref(db, "messages");
+    const messagesRef = ref(db, `chats/${chatId}/messages`);
 
     const unsubscribe = onValue(messagesRef, (snapshot) => {
       const data = snapshot.val();
@@ -31,6 +39,17 @@ export default function ChatWindow() {
 
       setMessages(msgs);
     });
+
+    useEffect(() => {
+      messages.forEach((msg) => {
+        if (
+          msg.receiverId === user.uid &&
+          msg.status === "sent"
+        ) {
+          set(ref(db, `messages/${msg.id}/status`), "delivered");
+        }
+      });
+    }, [messages]);
 
     // cleanup (good practice)
     return () => unsubscribe();
@@ -51,13 +70,27 @@ export default function ChatWindow() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    messages.forEach((msg) => {
+      if (
+        msg.receiverId === user.uid &&
+        msg.status !== "seen"
+      ) {
+        set(ref(db, `messages/${msg.id}/status`), "seen");
+      }
+    });
+  }, []);
+
   return (
     <div className="flex flex-col flex-1">
       {/* Header */}
       <div className="p-4 border-b bg-white dark:bg-gray-900 flex items-center justify-between">
-        <div>
-          <p className="font-semibold text-black dark:text-white">Ayesha</p>
-          <p className="text-xs text-green-500">online</p>
+        <div className="flex items-center gap-3">
+          <Avatar name={activeUser.name} />
+          <div>
+            <p className="font-semibold">{activeUser.name}</p>
+            <p className="text-xs text-green-500">online</p>
+          </div>
         </div>
 
         <div className="flex gap-3 text-gray-400 cursor-pointer">
