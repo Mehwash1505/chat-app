@@ -7,7 +7,7 @@ export default function Message({ message }) {
         minute: "2-digit",
       })
     : "";
-
+       
   return (
     <div className={`flex mb-2 ${isMe ? "justify-end" : "justify-start"}`}>
       <div
