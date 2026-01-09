@@ -18,5 +18,4 @@ function App() {
 
   return <ChatPage />;
 }
-
 export default App;
