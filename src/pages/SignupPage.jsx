@@ -18,3 +18,4 @@ export default function SignupPage({ switchToLogin }) {
     </div>
   );
 }
+
