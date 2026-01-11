@@ -46,6 +46,7 @@ export default function ChatWindow({ activeUser }) {
     return () => unsubscribe();
   }, [chatId]);
 
+
   // 🔹 DELIVERED STATUS
   useEffect(() => {
     if (!chatId || !user) return;
@@ -78,7 +79,7 @@ export default function ChatWindow({ activeUser }) {
         );
       }
     });
-  }, [chatId, user]);
+  }, [chatId, user, messages]);
 
   // 🔹 TYPING INDICATOR
   useEffect(() => {
@@ -154,7 +155,10 @@ export default function ChatWindow({ activeUser }) {
       )}
 
       {/* Input */}
-      <MessageInput chatId={chatId} />
+      <MessageInput
+       chatId={chatId} 
+       receiverId={activeUser.id}
+      />
     </div>
   );
 }
