@@ -127,7 +127,13 @@ export default function ChatWindow({ activeUser }) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 p-4 overflow-y-auto bg-gray-50 ">
+      <div
+        className="flex-1 p-6 overflow-y-auto"
+        style={{
+          backgroundImage:
+            "url('https://www.transparenttextures.com/patterns/cubes.png')",
+        }}
+      >
         {messages.length === 0 && (
           <p className="text-center text-gray-400 mt-10 ">
             No messages yet. Say hi 👋
