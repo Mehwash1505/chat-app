@@ -31,8 +31,8 @@ export default function MessageInput() {
   };
 
   return (
-    <div className="p-4 border-t bg-white dark:bg-gray-900 flex gap-2 items-center">
-      <span className="text-gray-400 cursor-pointer">😊</span>
+    <div className="p-4 border-t bg-white dark:bg-gray-900 flex gap-2 items-center text-black dark:text-white">
+      <span className="text-gray-400 cursor-pointer ">😊</span>
 
       <input
         value={text}
