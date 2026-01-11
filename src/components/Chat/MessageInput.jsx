@@ -15,7 +15,7 @@ export default function MessageInput({ chatId, receiverId  }) {
     await push(messagesRef, {
       text,
       senderId: user.uid,
-      receiverId: activeUser.uid,
+      receiverId: receiverId,
       timestamp: serverTimestamp(),
       status: "sent",
     });
@@ -51,6 +51,5 @@ export default function MessageInput({ chatId, receiverId  }) {
       </button>
     </div>
   );
-
 }
 
