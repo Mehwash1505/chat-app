@@ -58,11 +58,11 @@ export default function ChatWindow({ activeUser }) {
       ) {
         set(
           ref(db, `chats/${chatId}/messages/${msg.id}/status`),
-          "delivered"
+          "seen"
         );
       }
     });
-  }, [messages, chatId, user]);
+  }, [chatId, user, messages]);
 
   // 🔹 SEEN STATUS
   useEffect(() => {
