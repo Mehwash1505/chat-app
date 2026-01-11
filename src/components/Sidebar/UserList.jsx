@@ -45,6 +45,7 @@ export default function UserList( { setActiveUser } ) {
         return (
           <div
             key={user.id}
+            onClick={() => setActiveUser(user)}
             className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition flex justify-between items-center cursor-pointer text-black dark:text-white"
           >
             {/* Left side: name + last message */}
