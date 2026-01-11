@@ -21,4 +21,4 @@ export default function ChatPage() {
       <ChatWindow activeUser={activeUser} />
     </div>
   );
-}
+} 
