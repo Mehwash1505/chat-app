@@ -53,7 +53,7 @@ export default function UserList( { setActiveUser } ) {
               <Avatar name={user.name} />
               <div>
                 <p className="font-medium">{user.name}</p>
-                <p className="text-xs text-gray-400">last message...</p>
+                <p className="text-xs text-gray-400">{lastMessage?.text || "No messages yet"}</p>
               </div>
             </div>
         
