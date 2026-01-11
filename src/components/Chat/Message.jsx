@@ -13,8 +13,8 @@ export default function Message({ message }) {
       <div
         className={`px-4 py-2 rounded-lg max-w-xs ${
           isMe
-            ? "bg-blue-500 text-white"
-            : "bg-white dark:bg-gray-900 border"
+            ? "bg-blue-500 text-white rounded-br-none"
+            : "bg-white dark:bg-gray-900 border rounded-bl-none"
         }`}
       >
         <p>{message.text}</p>
