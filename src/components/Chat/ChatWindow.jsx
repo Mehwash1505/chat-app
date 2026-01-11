@@ -11,7 +11,11 @@ export default function ChatWindow({ activeUser }) {
   const { user } = useAuth();
 
   if (!activeUser) {
-    return <p className="p-4">Select a chat</p>;
+    return (
+      <div className="flex-1 flex items-center justify-center text-gray-400">
+        Select a chat
+      </div>
+    );
   }
 
   const chatId = [user.uid, activeUser.id]
