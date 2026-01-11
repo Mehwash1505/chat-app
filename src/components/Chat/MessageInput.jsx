@@ -3,19 +3,14 @@ import { ref, set, push, serverTimestamp } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
 
-export default function MessageInput() {
+export default function MessageInput({ chatId, receiverId  }) {
   const [text, setText] = useState("");
   const { user } = useAuth();
 
   const sendMessage = async () => {
-    if (!user) {
-      alert("Please login to send messages");
-      return;
-    }
+    if (!user || !chatId || !receiverId || !text.trim()) return;
 
-    if (!text.trim()) return;
-
-    const messagesRef = ref(db, "messages");
+    const messagesRef = ref(db, `chats/${chatId}/messages`);
 
     await push(messagesRef, {
       text,
@@ -25,6 +20,7 @@ export default function MessageInput() {
       status: "sent",
     });
     
+    //typing off
     await set(ref(db, `typing/${user.uid}`), false);
 
     setText("");
@@ -38,7 +34,7 @@ export default function MessageInput() {
         value={text}
         onChange={(e) => {
           setText(e.target.value);
-          if (user) {
+          if (user && chatId) {
             set(ref(db, `typing/${user.uid}`), true);
           }
         }}
@@ -49,7 +45,7 @@ export default function MessageInput() {
       <button
         onClick={sendMessage}
         className="bg-blue-500 text-white rounded-full px-4 py-2"
-        disabled={!user}
+        disabled={!chatId}
       >
         ➤
       </button>
