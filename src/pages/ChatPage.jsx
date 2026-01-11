@@ -17,7 +17,10 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen">
-      <UserList setActiveUser={setActiveUser} />
+      <UserList
+       activeUser={activeUser}
+       setActiveUser={setActiveUser} 
+      />
       <ChatWindow activeUser={activeUser} />
     </div>
   );
