@@ -19,6 +19,12 @@ export default function MessageInput({ chatId, receiverId  }) {
       timestamp: serverTimestamp(),
       status: "sent",
     });
+
+    await set(ref(db, `chats/${chatId}/lastMessage`), {
+      text,
+      senderId: user.uid,
+      timestamp: Date.now(),
+    });
     
     //typing off
     await set(ref(db, `typing/${user.uid}`), false);
