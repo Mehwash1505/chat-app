@@ -1,16 +1,24 @@
-import ChatWindow from "../components/Chat/ChatWindow";
-import UserList from "../components/Sidebar/UserList";
 import { useState } from "react";
-
-const [activeUser, setActiveUser] = useState(null);
-
+import { useAuth } from "../context/AuthContext";
+import UserList from "../components/Sidebar/UserList";
+import ChatWindow from "../components/Chat/ChatWindow";
 
 export default function ChatPage() {
+  const { user } = useAuth();
+  const [activeUser, setActiveUser] = useState(null);
+
+  if (!user) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <h2>Please login to continue</h2>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen">
       <UserList setActiveUser={setActiveUser} />
       <ChatWindow activeUser={activeUser} />
-
     </div>
   );
-} 
+}
