@@ -21,16 +21,20 @@ export default function MessageInput({ chatId, receiverId  }) {
       status: "sent",
     });
 
-    await set(
-      ref(db, `chats/${chatId}/unread/${receiverId}`),
-      increment(1)
+    const receiverUnreadRef = ref(
+      db,
+      `chats/${chatId}/unread/${receiverId}`
     );
+
+    await set(receiverUnreadRef, (prev) => (prev || 0) + 1);
 
     await set(ref(db, `chats/${chatId}/lastMessage`), {
       text,
       senderId: user.uid,
       timestamp: Date.now(),
     });
+
+    set(ref(db, `typing/${chatId}/${user.uid}`), true);
     
     //typing off
     await set(ref(db, `typing/${user.uid}`), false);
