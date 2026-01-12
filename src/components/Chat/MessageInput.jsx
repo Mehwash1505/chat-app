@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { ref, set, push, serverTimestamp } from "firebase/database";
+import { ref, set, push, serverTimestamp, get } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
-import { increment } from "firebase/database";
+
 
 export default function MessageInput({ chatId, receiverId  }) {
   const [text, setText] = useState("");
@@ -21,21 +21,20 @@ export default function MessageInput({ chatId, receiverId  }) {
       status: "sent",
     });
 
-    const receiverUnreadRef = ref(
-      db,
-      `chats/${chatId}/unread/${receiverId}`
-    );
-
-    await set(receiverUnreadRef, (prev) => (prev || 0) + 1);
-
+    // last message
     await set(ref(db, `chats/${chatId}/lastMessage`), {
       text,
       senderId: user.uid,
       timestamp: Date.now(),
     });
 
-    set(ref(db, `typing/${chatId}/${user.uid}`), true);
+    // unread increment (Realtime DB safe)
+    const unreadRef = ref(db, `chats/${chatId}/unread/${receiverId}`);
+    const snapshot = await get(unreadRef);
+    const currentUnread = snapshot.val() || 0;
+    await set(unreadRef, currentUnread + 1);
     
+    set(ref(db, `typing/${chatId}/${user.uid}`), true);
     //typing off
     await set(ref(db, `typing/${user.uid}`), false);
 
