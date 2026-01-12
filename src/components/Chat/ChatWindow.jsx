@@ -95,8 +95,9 @@ export default function ChatWindow({ activeUser }) {
     const unsub = onValue(typingRef, (snapshot) => {
       console.log("TYPING SNAPSHOT:", snapshot.val());
       const data = snapshot.val() || {};
+
       const otherTyping = Object.entries(data).some(
-        ([uid, val]) => uid !== user.uid && val === true
+        ([uid, isTyping]) => uid !== user.uid && isTyping === true
       );
       setTyping(otherTyping);
     });
