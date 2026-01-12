@@ -35,6 +35,7 @@ export default function UserList({ activeUser, setActiveUser }) {
     const chatsRef = ref(db, "chats");
 
     const unsub = onValue(chatsRef, (snapshot) => {
+      console.log("CHATS SNAPSHOT:", snapshot.val());
       const data = snapshot.val() || {};
       const counts = {};
       const last = {};
@@ -50,7 +51,7 @@ export default function UserList({ activeUser, setActiveUser }) {
       setUnread(counts);
       setLastMessages(last);
     });
-    
+
     return () => unsub();
   }, []);
 
