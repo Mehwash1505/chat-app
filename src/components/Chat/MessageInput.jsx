@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ref, set, push, serverTimestamp } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
+import { increment } from "firebase/database";
 
 export default function MessageInput({ chatId, receiverId  }) {
   const [text, setText] = useState("");
@@ -19,6 +20,11 @@ export default function MessageInput({ chatId, receiverId  }) {
       timestamp: serverTimestamp(),
       status: "sent",
     });
+
+    await set(
+      ref(db, `chats/${chatId}/unread/${receiverId}`),
+      increment(1)
+    );
 
     await set(ref(db, `chats/${chatId}/lastMessage`), {
       text,
