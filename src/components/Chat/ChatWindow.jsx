@@ -77,7 +77,7 @@ export default function ChatWindow({ activeUser }) {
           ref(db, `chats/${chatId}/unread/${user.uid}`),
           0
         );
-        
+
         set(
           ref(db, `chats/${chatId}/messages/${msg.id}/status`),
           "seen"
@@ -121,7 +121,9 @@ export default function ChatWindow({ activeUser }) {
           <Avatar name={activeUser.name} />
           <div>
             <p className="font-semibold text-black dark:text-white">{activeUser.name}</p>
-            <p className="text-xs text-green-500">online</p>
+            <p className="text-xs text-green-500">
+              {typing ? "typing..." : "online"}
+            </p>
           </div>
         </div>
 
