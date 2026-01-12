@@ -37,27 +37,20 @@ export default function UserList({ activeUser, setActiveUser }) {
     const unsub = onValue(chatsRef, (snapshot) => {
       const data = snapshot.val() || {};
       const counts = {};
+      const last = {};
 
       Object.entries(data).forEach(([chatId, chat]) => {
-        if (!chat.messages) return;
+        // unread count directly from DB
+        counts[chatId] = chat.unread?.[auth.currentUser.uid] || 0;
 
-        let count = 0;
-
-        Object.values(chat.messages).forEach((msg) => {
-          if (
-            msg.receiverId === auth.currentUser.uid &&
-            msg.status !== "seen"
-          ) {
-            count++;
-          }
-        });
-
-        counts[chatId] = count;
+        // last message directly from DB
+        last[chatId] = chat.lastMessage;
       });
 
       setUnread(counts);
+      setLastMessages(last);
     });
-
+    
     return () => unsub();
   }, []);
 
@@ -107,8 +100,8 @@ export default function UserList({ activeUser, setActiveUser }) {
                   <p className="font-medium text-black dark:text-white">
                     {user.name}
                   </p>
-                  <p className="text-xs text-gray-400">
-                    last message...
+                  <p className="text-xs text-gray-400 truncate">
+                    {lastMessages[chatId]?.text || "No messages yet"}
                   </p>
                 </div>
               </div>
