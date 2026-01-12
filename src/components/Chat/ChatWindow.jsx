@@ -77,7 +77,7 @@ export default function ChatWindow({ activeUser }) {
           ref(db, `chats/${chatId}/unread/${user.uid}`),
           0
         );
-
+         
         set(
           ref(db, `chats/${chatId}/messages/${msg.id}/status`),
           "seen"
