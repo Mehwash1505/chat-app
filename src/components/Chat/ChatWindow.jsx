@@ -88,16 +88,20 @@ export default function ChatWindow({ activeUser }) {
 
   // 🔹 TYPING INDICATOR
   useEffect(() => {
-    if (!chatId) return;
+    if (!chatId || !user) return;
 
     const typingRef = ref(db, `typing/${chatId}`);
 
-    const unsubscribe = onValue(typingRef, (snapshot) => {
-      setTyping(Boolean(snapshot.val()));
+    const unsub = onValue(typingRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      const otherTyping = Object.entries(data).some(
+        ([uid, val]) => uid !== user.uid && val === true
+      );
+      setTyping(otherTyping);
     });
 
-    return () => unsubscribe();
-  }, [chatId]);
+    return () => unsub();
+  }, [chatId, user]);
 
   // 🔹 AUTO SCROLL
   useEffect(() => {
