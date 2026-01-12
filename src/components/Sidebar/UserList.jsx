@@ -14,6 +14,8 @@ const users = [
 export default function UserList({ activeUser, setActiveUser }) {
   const [presence, setPresence] = useState({});
   const [unread, setUnread] = useState({});
+  const [lastMessages, setLastMessages] = useState({});
+
 
   // 🔹 presence (online / offline)
   useEffect(() => {
