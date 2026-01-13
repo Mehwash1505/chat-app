@@ -13,7 +13,7 @@ export default function SignupPage({ switchToLogin }) {
           onClick={switchToLogin}
         >
           Already have an account? Login
-        </p>
+        </p> 
       </div>
     </div>
   );
