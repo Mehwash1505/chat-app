@@ -20,6 +20,7 @@ export default function MessageInput({ chatId, receiverId  }) {
       timestamp: serverTimestamp(),
       status: "sent",
     });
+    
 
     // last message
     await set(ref(db, `chats/${chatId}/lastMessage`), {
