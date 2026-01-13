@@ -12,7 +12,7 @@ export default function MessageInput({ chatId, receiverId  }) {
     if (!user || !chatId || !receiverId || !text.trim()) return;
 
     const messagesRef = ref(db, `chats/${chatId}/messages`);
-
+ 
     await push(messagesRef, {
       text,
       senderId: user.uid,
@@ -20,7 +20,7 @@ export default function MessageInput({ chatId, receiverId  }) {
       timestamp: serverTimestamp(),
       status: "sent",
     });
-    
+
 
     // last message
     await set(ref(db, `chats/${chatId}/lastMessage`), {
