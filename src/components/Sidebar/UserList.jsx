@@ -6,6 +6,7 @@ import { auth } from "../../firebase/firebase";
 import Avatar from "../Avatar";
 
 const users = [
+  
   {
     id: "5FW4xfEprtWlSLZ4V3nNSnbgH9V2", // Ayesha UID
     name: "Ayesha",
@@ -14,6 +15,7 @@ const users = [
     id: "5fg0mqwKzZhzQhevxPKArEXhSmp2", // Rahul UID
     name: "Rahul",
   },
+
 ];
 
 export default function UserList({ activeUser, setActiveUser }) {
