@@ -14,7 +14,7 @@ function App() {
     ) : (
       <LoginPage switchToSignup={() => setIsSignup(true)} />
     );
-  }
+  } 
 
   return <ChatPage />;
 }
