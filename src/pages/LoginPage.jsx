@@ -11,7 +11,7 @@ export default function LoginPage({ switchToSignup }) {
         <p
           className="text-sm text-blue-500 mt-4 cursor-pointer text-center"
           onClick={switchToSignup}
-        >
+        > 
           Don't have an account? Signup
         </p>
       </div>
