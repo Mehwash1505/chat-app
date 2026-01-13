@@ -14,7 +14,7 @@ export default function ChatPage() {
       </div>
     );
   }
-
+ 
   return (
     <div className="flex h-screen">
       <UserList
