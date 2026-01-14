@@ -46,6 +46,13 @@ export default function ChatWindow({ activeUser }) {
     return () => unsubscribe();
   }, [chatId]);
 
+  // 🔹 RESET UNREAD WHEN CHAT OPEN
+  useEffect(() => {
+    if (!chatId || !user) return;
+  
+    const unreadRef = ref(db, `chats/${chatId}/unread/${user.uid}`);
+    set(unreadRef, 0);
+  }, [chatId]);
 
   // 🔹 DELIVERED STATUS
   useEffect(() => {
