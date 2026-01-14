@@ -1,8 +1,8 @@
 export default function Message({ message }) {
   const isMe = message.sender === "me";
 
-  const time = message.timestamp
-    ? new Date(message.timestamp).toLocaleTimeString([], {
+  const time = message.seenAt || message.timestamp
+    ? new Date(message.seenAt || message.timestamp).toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       })
