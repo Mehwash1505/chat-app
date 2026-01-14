@@ -2,10 +2,12 @@ import { useState, useRef } from "react";
 import { ref, set, push, get } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
+import EmojiPicker from "emoji-picker-react";
 
 export default function MessageInput({ chatId, receiverId }) {
   const [text, setText] = useState("");
   const { user } = useAuth();
+  const [showEmoji, setShowEmoji] = useState(false);
 
   // ⏱️ typing debounce timer
   const typingTimeout = useRef(null);
@@ -71,7 +73,23 @@ export default function MessageInput({ chatId, receiverId }) {
 
   return (
     <div className="p-4 border-t bg-white dark:bg-gray-900 flex gap-2 items-center">
-      <span className="text-gray-400 cursor-pointer">😊</span>
+      <span
+       className="text-gray-400 cursor-pointer"
+       onClick={() => setShowEmoji(!showEmoji)}
+      >
+        😊
+      </span>
+
+      {showEmoji && (
+        <div className="absolute bottom-20 left-4 z-50">
+          <EmojiPicker
+            onEmojiClick={(emoji) =>
+              setText((prev) => prev + emoji.emoji)
+            }
+            theme="dark"
+          />
+        </div>
+      )}
 
       <input
         value={text}
