@@ -6,6 +6,7 @@ import ChatWindow from "../components/Chat/ChatWindow";
 export default function ChatPage() {
   const { user } = useAuth();
   const [activeUser, setActiveUser] = useState(null);
+  const [showSidebar, setShowSidebar] = useState(true);
 
   if (!user) {
     return (
@@ -17,11 +18,24 @@ export default function ChatPage() {
  
   return (
     <div className="flex h-screen">
-      <UserList
-       activeUser={activeUser}
-       setActiveUser={setActiveUser} 
-      />
-      <ChatWindow activeUser={activeUser} />
+      {/* Sidebar */}
+      <div className={`${ showSidebar ? "block" : "hidden"} md:block`}>
+        <UserList
+          activeUser={activeUser}
+          setActiveUser={(user) => {
+            setActiveUser(user);
+            setShowSidebar(false); // mobile pe hide
+          }}
+        />
+      </div>
+        
+      {/* Chat */}
+      <div className="flex-1">
+        <ChatWindow
+          activeUser={activeUser}
+          onBack={() => setShowSidebar(true)} // mobile back
+        />
+      </div>
     </div>
   );
 } 
