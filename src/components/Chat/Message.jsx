@@ -11,13 +11,13 @@ export default function Message({ message }) {
   return (
     <div className={`flex mb-2 ${isMe ? "justify-end" : "justify-start"}`}>
       <div
-        className={`px-4 py-2 rounded-lg max-w-xs ${
+        className={`px-4 py-2 rounded-2xl max-w-xs shadow-sm ${
           isMe
-            ? "bg-blue-500 text-white rounded-br-none"
-            : "bg-white dark:bg-gray-900 border rounded-bl-none"
+            ? "bg-blue-500 text-white rounded-br-sm"
+            : "bg-gray-200 dark:bg-gray-900 text-black dark:text-white rounded-bl-sm"
         }`}
       >
-        <p>{message.text}</p>
+        <p className="text-sm leading-snug">{message.text}</p>
         <p className="text-[10px] text-right opacity-70 mt-1">
           {time}
         </p>
