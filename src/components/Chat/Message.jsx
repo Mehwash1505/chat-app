@@ -1,3 +1,7 @@
+import { ref, set } from "firebase/database";
+import { db } from "../../firebase/firebase";
+import { useAuth } from "../../context/AuthContext";
+
 export default function Message({ message }) {
   const isMe = message.sender === "me";
 
