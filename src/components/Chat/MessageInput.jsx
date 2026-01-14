@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { ref, set, push, get } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
@@ -7,10 +7,12 @@ export default function MessageInput({ chatId, receiverId }) {
   const [text, setText] = useState("");
   const { user } = useAuth();
 
+  // ⏱️ typing debounce timer
+  const typingTimeout = useRef(null);
+
   const sendMessage = async () => {
     if (!user || !chatId || !receiverId || !text.trim()) return;
 
-    // 🔹 Message reference
     const msgRef = push(ref(db, `chats/${chatId}/messages`));
 
     const messageData = {
@@ -21,26 +23,50 @@ export default function MessageInput({ chatId, receiverId }) {
       status: "sent",
     };
 
-    // 1️⃣ Save message
+    // 1️⃣ save message
     await set(msgRef, messageData);
 
-    // 2️⃣ Update lastMessage
+    // 2️⃣ update lastMessage
     await set(ref(db, `chats/${chatId}/lastMessage`), {
       text,
       senderId: user.uid,
       timestamp: Date.now(),
     });
 
-    // 3️⃣ Increment unread (Realtime DB safe)
+    // 3️⃣ increment unread count (safe way)
     const unreadRef = ref(db, `chats/${chatId}/unread/${receiverId}`);
     const snap = await get(unreadRef);
     const current = snap.val() || 0;
     await set(unreadRef, current + 1);
 
-    // 4️⃣ Typing OFF (chat-level)
+    // 4️⃣ typing OFF (important)
     await set(ref(db, `typing/${chatId}/${user.uid}`), false);
 
     setText("");
+  };
+
+  const handleChange = (e) => {
+    setText(e.target.value);
+    if (!user || !chatId) return;
+
+    // 🔹 typing ON
+    set(ref(db, `typing/${chatId}/${user.uid}`), true);
+
+    // 🔁 clear old timer
+    if (typingTimeout.current) {
+      clearTimeout(typingTimeout.current);
+    }
+
+    // ⏱️ typing OFF after 1.5s inactivity
+    typingTimeout.current = setTimeout(() => {
+      set(ref(db, `typing/${chatId}/${user.uid}`), false);
+    }, 1500);
+  };
+
+  const handleBlur = () => {
+    if (user && chatId) {
+      set(ref(db, `typing/${chatId}/${user.uid}`), false);
+    }
   };
 
   return (
@@ -49,14 +75,8 @@ export default function MessageInput({ chatId, receiverId }) {
 
       <input
         value={text}
-        onChange={(e) => {
-          setText(e.target.value);
-
-          // 🔹 Typing ON (chat-level)
-          if (user && chatId) {
-            set(ref(db, `typing/${chatId}/${user.uid}`), true);
-          }
-        }}
+        onChange={handleChange}
+        onBlur={handleBlur}
         className="flex-1 bg-gray-100 dark:bg-gray-800 text-black dark:text-white rounded-full px-4 py-2 focus:outline-none"
         placeholder="Type a message"
       />
