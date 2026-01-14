@@ -6,7 +6,7 @@ import Message from "./Message";
 import MessageInput from "./MessageInput";
 import Avatar from "../Avatar";
 
-export default function ChatWindow({ activeUser }) {
+export default function ChatWindow({ activeUser, onBack }) {
   // 🔒 ALL HOOKS AT TOP
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
@@ -131,6 +131,12 @@ export default function ChatWindow({ activeUser }) {
       {/* Header */}
       <div className="p-4 border-b bg-white dark:bg-gray-900 flex items-center justify-between">
         <div className="flex items-center gap-3">
+          <button
+            onClick={onBack}
+            className="md:hidden text-gray-400 mr-2"
+          >
+            ←
+          </button>
           <Avatar name={activeUser.name} />
           <div>
             <p className="font-semibold text-black dark:text-white">{activeUser.name}</p>
