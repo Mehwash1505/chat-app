@@ -49,7 +49,7 @@ export default function ChatWindow({ activeUser }) {
   // 🔹 RESET UNREAD WHEN CHAT OPEN
   useEffect(() => {
     if (!chatId || !user) return;
-  
+
     const unreadRef = ref(db, `chats/${chatId}/unread/${user.uid}`);
     set(unreadRef, 0);
   }, [chatId]);
@@ -81,17 +81,17 @@ export default function ChatWindow({ activeUser }) {
         msg.status !== "seen"
       ) {
         set(
-          ref(db, `chats/${chatId}/unread/${user.uid}`),
-          0
-        );
-         
-        set(
-          ref(db, `chats/${chatId}/messages/${msg.id}/status`),
-          "seen"
-        );
+        ref(db, `chats/${chatId}/messages/${msg.id}/status`),
+        "seen"
+      );
+
+      set(
+        ref(db, `chats/${chatId}/messages/${msg.id}/seenAt`),
+        Date.now()
+      );
       }
     });
-  }, [chatId, user, messages]);
+  }, [messages, chatId, user ]);
 
   // 🔹 TYPING INDICATOR
   useEffect(() => {
