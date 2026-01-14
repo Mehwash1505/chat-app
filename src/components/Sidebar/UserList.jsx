@@ -15,6 +15,10 @@ const users = [
     id: "5fg0mqwKzZhzQhevxPKArEXhSmp2", // Rahul UID
     name: "Rahul",
   },
+  {
+    id: "2bdjTZ0eXqdMl2ZbrdGXo8eCWxz1",
+    name:"Zoya"
+  },
 
 ];
 
@@ -80,58 +84,60 @@ export default function UserList({ activeUser, setActiveUser }) {
 
       {/* User list */}
       <div className="flex-1 overflow-y-auto">
-        {users.map((user) => {
-          const isOnline = presence[user.id]?.online;
-          const chatId =
-            auth.currentUser &&
-            [auth.currentUser.uid, user.id].sort().join("_");
+        {users
+          .filter((u) => u.id !== auth.currentUser?.uid)
+          .map((user) => {
+            const isOnline = presence[user.id]?.online;
+            const chatId =
+              auth.currentUser &&
+              [auth.currentUser.uid, user.id].sort().join("_");
 
-          const unreadCount = unread[chatId] || 0;
+            const unreadCount = unread[chatId] || 0;
 
-          return (
-            <div
-              key={user.id}
-              onClick={() => setActiveUser(user)}
-              className={`px-4 py-3 cursor-pointer transition flex justify-between items-center
-                ${
-                  activeUser?.id === user.id
-                    ? "bg-blue-100 dark:bg-gray-800"
-                    : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                }
-              `}
-            >
-              {/* Left side */}
-              <div className="flex gap-3 items-center">
-                <Avatar name={user.name} />
+            return (
+              <div
+                key={user.id}
+                onClick={() => setActiveUser(user)}
+                className={`px-4 py-3 cursor-pointer transition flex justify-between items-center
+                  ${
+                    activeUser?.id === user.id
+                      ? "bg-blue-100 dark:bg-gray-800"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-800"
+                  }
+                `}
+              >
+                {/* Left side */}
+                <div className="flex gap-3 items-center">
+                  <Avatar name={user.name} />
 
-                <div>
-                  <p className="font-medium text-black dark:text-white">
-                    {user.name}
-                  </p>
-                  <p className="text-xs text-gray-400 truncate">
-                    {lastMessages[chatId]?.text || "No messages yet"}
-                  </p>
+                  <div>
+                    <p className="font-medium text-black dark:text-white">
+                      {user.name}
+                    </p>
+                    <p className="text-xs text-gray-400 truncate">
+                      {lastMessages[chatId]?.text || "No messages yet"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Right side */}
+                <div className="flex flex-col items-end gap-1">
+                  {/* online dot */}
+                  <span
+                    className={`h-2 w-2 rounded-full ${
+                      isOnline ? "bg-green-500" : "bg-gray-400"
+                    }`}
+                  />
+
+                  {/* unread badge */}
+                  {unreadCount > 0 && (
+                    <span className="bg-blue-500 text-white text-xs px-2 rounded-full">
+                      {unreadCount}
+                    </span>
+                  )}
                 </div>
               </div>
-
-              {/* Right side */}
-              <div className="flex flex-col items-end gap-1">
-                {/* online dot */}
-                <span
-                  className={`h-2 w-2 rounded-full ${
-                    isOnline ? "bg-green-500" : "bg-gray-400"
-                  }`}
-                />
-
-                {/* unread badge */}
-                {unreadCount > 0 && (
-                  <span className="bg-blue-500 text-white text-xs px-2 rounded-full">
-                    {unreadCount}
-                  </span>
-                )}
-              </div>
-            </div>
-          );
+            );
         })}
       </div>
     </div>
