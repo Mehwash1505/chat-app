@@ -92,9 +92,9 @@ export default function ChatWindow({ activeUser }) {
 
     const typingRef = ref(db, `typing/${chatId}`);
 
-    const unsub = onValue(typingRef, (snapshot) => {
-      console.log("TYPING SNAPSHOT:", snapshot.val());
-      const data = snapshot.val() || {};
+    const unsub = onValue(typingRef, (snap) => {
+      console.log("TYPING SNAPSHOT:", snap.val());
+      const data = snap.val() || {};
 
       const otherTyping = Object.entries(data).some(
         ([uid, isTyping]) => uid !== user.uid && isTyping === true
