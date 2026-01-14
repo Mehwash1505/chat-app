@@ -4,6 +4,7 @@ import { db } from "../../firebase/firebase";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import Avatar from "../Avatar";
+import { useAuth } from "../../context/AuthContext";
 
 const users = [
   
@@ -12,7 +13,7 @@ const users = [
     name: "Ayesha",
   },
   {
-    id: "5fg0mqwKzZhzQhevxPKArEXhSmp2", // Rahul UID
+    id: "iweuFomlsDYDb3gjkw9qJdicOAv1", // Rahul UID
     name: "Rahul",
   },
   {
