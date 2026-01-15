@@ -51,18 +51,18 @@ export default function MessageInput({ chatId, receiverId }) {
     setText(e.target.value);
     if (!user || !chatId) return;
 
-    // 🔹 typing ON
+    // typing ON
     set(ref(db, `typing/${chatId}/${user.uid}`), true);
 
-    // 🔁 clear old timer
+    // clear old timer
     if (typingTimeout.current) {
       clearTimeout(typingTimeout.current);
     }
 
-    // ⏱️ typing OFF after 1.5s inactivity
+    // typing OFF after 1s inactivity
     typingTimeout.current = setTimeout(() => {
       set(ref(db, `typing/${chatId}/${user.uid}`), false);
-    }, 1500);
+    }, 1000);
   };
 
   const handleBlur = () => {
@@ -81,7 +81,7 @@ export default function MessageInput({ chatId, receiverId }) {
       </span>
 
       {showEmoji && (
-        <div className="absolute bottom-20 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t">
+        <div className="absolute bottom-16 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t">
           <EmojiPicker
             height={350}
             width="100%"
