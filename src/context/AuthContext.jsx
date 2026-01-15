@@ -36,6 +36,19 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (!user) return;
+
+    const userPresenceRef = ref(db, `presence/${user.uid}`);
+
+    // online
+    set(userPresenceRef, { online: true });
+
+    // offline when tab closes / logout / crash
+    onDisconnect(userPresenceRef).set({ online: false });
+
+  }, [user]);
+
   return (
     <AuthContext.Provider value={{ user }}>
       {!loading && children}
@@ -43,5 +56,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// ✅ YEH LINE MOST IMPORTANT HAI
+// YEH LINE MOST IMPORTANT HAI
 export const useAuth = () => useContext(AuthContext);
