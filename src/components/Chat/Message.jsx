@@ -4,6 +4,16 @@ import { useAuth } from "../../context/AuthContext";
 
 export default function Message({ message }) {
   const { user } = useAuth();
+  const [tickColors, setTickColors] = useState({});
+
+  useEffect(() => {
+    if (!user) return;
+
+    onValue(ref(db, `users/${user.uid}`), (snap) => {
+      setTickColors(snap.val() || {});
+    });
+  }, []);
+
 
   const isMe = message.sender === "me";
 
@@ -37,12 +47,21 @@ export default function Message({ message }) {
           {time}
         </p>
         {isMe && (
-          <span className={`text-xs ml-2 ${
-            message.status === "seen" ? "text-blue-500" : "text-gray-400"
-          }`}>
-            {message.status === "sent" && "✔"}
-            {message.status === "delivered" && "✔✔"}
-            {message.status === "seen" && "✔✔"}
+          <span className="text-xs ml-2 flex items-center">
+            {/* SENT */}
+            {message.status === "sent" && (
+              <span className="text-gray-400">✔</span>
+            )}
+
+            {/* DELIVERED */}
+            {message.status === "delivered" && (
+              <span className="text-gray-400">✔✔</span>
+            )}
+
+            {/* SEEN */}
+            {message.status === "seen" && (
+              <span className="text-blue-500">✔✔</span>
+            )}
           </span>
         )}
       </div>
