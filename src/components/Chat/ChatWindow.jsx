@@ -119,12 +119,13 @@ export default function ChatWindow({ activeUser, onBack }) {
   }, [messages]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!chatId) return;
 
-    onValue(ref(db, `users/${user.uid}/chatWallpaper`), (snap) => {
-      setWallpaper(snap.val());
+    const wpRef = ref(db, `chatSettings/${chatId}/wallpaper`);
+    return onValue(wpRef, (snap) => {
+      setWallpaper(snap.val() || "default");
     });
-  }, [user]);
+  }, [chatId]);
 
   // ✅ CONDITIONAL RENDER (AFTER ALL HOOKS)
   if (!activeUser) {
@@ -163,7 +164,7 @@ export default function ChatWindow({ activeUser, onBack }) {
 
       {/* Messages */}
       <div
-        className="flex-1 p-4 overflow-y-auto"
+        className="flex-1 p-4 overflow-y-auto chat-bg-${wallpaper}"
         style={{
           backgroundImage: wallpaper ? `url(${wallpaper})` : "none",
           backgroundSize: "cover",
