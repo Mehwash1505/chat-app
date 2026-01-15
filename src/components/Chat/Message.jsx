@@ -3,7 +3,7 @@ import { ref, set, onValue } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
 
-export default function Message({ message }) {
+export default function Message({ message, chatId }) {
   const { user } = useAuth();
   const [tickColors, setTickColors] = useState({});
 
@@ -16,7 +16,7 @@ export default function Message({ message }) {
   }, []);
 
 
-  const isMe = message.sender === "me";
+  const isMe = message.senderId === "user.uid";
 
   const time = message.seenAt || message.timestamp
     ? new Date(message.seenAt || message.timestamp).toLocaleTimeString([], {
