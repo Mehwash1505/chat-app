@@ -81,13 +81,22 @@ export default function MessageInput({ chatId, receiverId }) {
       </span>
 
       {showEmoji && (
-        <div className="absolute bottom-20 left-4 z-50">
+        <div className="absolute bottom-20 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t">
           <EmojiPicker
+            height={350}
+            width="100%"
             onEmojiClick={(emoji) =>
               setText((prev) => prev + emoji.emoji)
             }
-            theme="dark"
           />
+
+          {/* Remove / Close Emoji */}
+          <button
+            onClick={() => setShowEmoji(false)}
+            className="w-full text-center py-2 text-sm text-gray-500"
+          >
+            Close Emoji Keyboard
+          </button>
         </div>
       )}
 
@@ -98,6 +107,15 @@ export default function MessageInput({ chatId, receiverId }) {
         className="flex-1 bg-gray-100 dark:bg-gray-800 text-black dark:text-white rounded-full px-4 py-2 focus:outline-none"
         placeholder="Type a message"
       />
+
+      {text && (
+        <button
+          onClick={() => setText("")}
+          className="text-xs text-gray-400"
+        >
+          ✕
+        </button>
+      )}
 
       <button
         onClick={sendMessage}
