@@ -6,7 +6,7 @@ import Message from "./Message";
 import MessageInput from "./MessageInput";
 import Avatar from "../Avatar";
 
-export default function ChatWindow({ activeUser, onBack }) {
+export default function ChatWindow({ activeUser, onBack, chatId }) {
   // 🔒 ALL HOOKS AT TOP
   const [wallpaper, setWallpaper] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -53,7 +53,7 @@ export default function ChatWindow({ activeUser, onBack }) {
 
     const unreadRef = ref(db, `chats/${chatId}/unread/${user.uid}`);
     set(unreadRef, 0);
-  }, [chatId]);
+  }, [chatId, user]);
 
   // 🔹 DELIVERED STATUS
   useEffect(() => {
