@@ -10,13 +10,17 @@ export default function Message({ message, chatId }) {
   useEffect(() => {
     if (!user) return;
 
-    onValue(ref(db, `users/${user.uid}`), (snap) => {
-      setTickColors(snap.val() || {});
-    });
-  }, []);
+    const userRef = ref(db, `users/${user.uid}`);
+      const unsub = onValue(userRef, (snap) => {
+        setTickColors(snap.val() || {});
+      });
 
+    return () => unsub();
+  }, [user]);
 
   const isMe = message.senderId === "user.uid";
+
+  if (message.deletedFor?.[user.uid]) return null;
 
   const time = message.seenAt || message.timestamp
     ? new Date(message.seenAt || message.timestamp).toLocaleTimeString([], {
@@ -25,7 +29,6 @@ export default function Message({ message, chatId }) {
       })
     : "";
 
-  if (message.deletedFor?.[user.uid]) return null;
 
   const deleteForMe = async () => {
     await set(
@@ -44,11 +47,13 @@ export default function Message({ message, chatId }) {
         }`}
       >
         <p className="text-sm leading-snug">{message.text}</p>
+
         <p className="text-[10px] text-right opacity-70 mt-1">
           {time}
         </p>
+        
         {isMe && (
-          <span className="text-xs ml-2 flex items-center">
+          <span className={`text-xs ml-2 flex items-center ${tickColors}`}>
             {/* SENT */}
             {message.status === "sent" && (
               <span className="text-gray-400">✔</span>
