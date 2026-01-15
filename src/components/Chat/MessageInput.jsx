@@ -3,7 +3,7 @@ import { ref, set, push, get } from "firebase/database";
 import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
 import EmojiPicker from "emoji-picker-react";
-
+ 
 export default function MessageInput({ chatId, receiverId }) {
   const [text, setText] = useState("");
   const { user } = useAuth();
