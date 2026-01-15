@@ -17,7 +17,7 @@ export default function ChatPage() {
   }
  
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overfliw-hidden">
       {/* Sidebar */}
       <div className={`${ showSidebar ? "block" : "hidden"} md:block`}>
         <UserList
