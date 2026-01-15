@@ -183,6 +183,7 @@ export default function ChatWindow({ activeUser, onBack }) {
               ...msg,
               sender: msg.senderId === user.uid ? "me" : "other",
             }}
+            chatId={chatId}
           />
         ))}
 
