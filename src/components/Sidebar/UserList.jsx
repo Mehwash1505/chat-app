@@ -67,6 +67,12 @@ export default function UserList({ activeUser, setActiveUser }) {
     return () => unsub();
   }, []);
 
+  const toggleMute = async (chatId) => {
+    const refMute = ref(db, `chats/${chatId}/muted/${auth.currentUser.uid}`);
+    const snap = await get(refMute);
+    await set(refMute, !snap.val());
+  };
+
   return (
     <div className="w-64 bg-white dark:bg-gray-900 border-r flex flex-col">
       {/* Header */}
@@ -131,7 +137,7 @@ export default function UserList({ activeUser, setActiveUser }) {
                   />
 
                   {/* unread badge */}
-                  {unreadCount > 0 && (
+                  {unreadCount > 0 && !chat?.muted?.[auth.currentUser.uid] && (
                     <span className="bg-blue-500 text-white text-xs px-2 rounded-full">
                       {unreadCount}
                     </span>
