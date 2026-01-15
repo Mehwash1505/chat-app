@@ -8,6 +8,7 @@ import Avatar from "../Avatar";
 
 export default function ChatWindow({ activeUser, onBack }) {
   // 🔒 ALL HOOKS AT TOP
+  const [wallpaper, setWallpaper] = useState(null);
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
   const { user } = useAuth();
@@ -117,6 +118,14 @@ export default function ChatWindow({ activeUser, onBack }) {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    if (!user) return;
+
+    onValue(ref(db, `users/${user.uid}/chatWallpaper`), (snap) => {
+      setWallpaper(snap.val());
+    });
+  }, [user]);
+
   // ✅ CONDITIONAL RENDER (AFTER ALL HOOKS)
   if (!activeUser) {
     return (
@@ -154,10 +163,10 @@ export default function ChatWindow({ activeUser, onBack }) {
 
       {/* Messages */}
       <div
-        className="flex-1 p-6 overflow-y-auto"
+        className="flex-1 p-4 overflow-y-auto"
         style={{
-          backgroundImage:
-            "url('https://www.transparenttextures.com/patterns/cubes.png')",
+          backgroundImage: wallpaper ? `url(${wallpaper})` : "none",
+          backgroundSize: "cover",
         }}
       >
         {messages.length === 0 && (
