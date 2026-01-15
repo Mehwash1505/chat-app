@@ -2,8 +2,20 @@
 @tailwind components;
 @tailwind utilities; 
 
-.chat-bg-default { background: #f3f4f6; }
-.chat-bg-dark { background: #0f172a; }
-.chat-bg-pattern1 {
-  background-image: url("/patterns/pattern1.png");
+.chat-bg-default {
+  background-color: #f3f4f6;
+}
+
+.chat-bg-dark {
+  background-color: #0f172a;
+}
+
+.chat-bg-blue {
+  background-color: #dbeafe;
+}
+
+.chat-bg-image {
+  background-image: url("/wallpapers/bg1.jpg");
+  background-size: cover;
+  background-position: center;
 }
