@@ -3,6 +3,8 @@ import { db } from "../../firebase/firebase";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Message({ message }) {
+  const { user } = useAuth();
+
   const isMe = message.sender === "me";
 
   const time = message.seenAt || message.timestamp
@@ -11,6 +13,15 @@ export default function Message({ message }) {
         minute: "2-digit",
       })
     : "";
+
+  if (message.deletedFor?.[user.uid]) return null;
+
+  const deleteForMe = async () => {
+    await set(
+      ref(db, `chats/${chatId}/messages/${message.id}/deletedFor/${user.uid}`),
+      true
+    );
+  };
        
   return (
     <div className={`flex mb-2 ${isMe ? "justify-end" : "justify-start"}`}>
