@@ -35,6 +35,7 @@ export default function Message({ message, chatId }) {
       ref(db, `chats/${chatId}/messages/${message.id}`),
       {
         ...message,
+        originalText: message.text,
         text: "This message was deleted",
         deleted: true,
          deletedAt: Date.now(),
@@ -48,6 +49,7 @@ export default function Message({ message, chatId }) {
       ref(db, `chats/${chatId}/messages/${message.id}`),
       {
         ...message,
+        text: message.originalText,
         deleted: false,
         deletedAt: null,
       }
