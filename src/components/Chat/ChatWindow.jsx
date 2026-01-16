@@ -6,15 +6,17 @@ import Message from "./Message";
 import MessageInput from "./MessageInput";
 import Avatar from "../Avatar";
 
-export default function ChatWindow({ activeUser, onBack, chatId }) {
-  // 🔒 ALL HOOKS AT TOP
-  const [wallpaper, setWallpaper] = useState(null);
+export default function ChatWindow({ activeUser, onBack }) {
+  const { user } = useAuth();
+
+  // ALL HOOKS AT TOP
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
-  const { user } = useAuth();
+  const [wallpaper, setWallpaper] = useState(null);
+
   const bottomRef = useRef(null);
 
-  // 🔑 chatId calculation (NO hooks here)
+  // chatId calculation (NO hooks here)
   const chatId =
     user && activeUser
       ? [user.uid, activeUser.id].sort().join("_")
@@ -47,12 +49,10 @@ export default function ChatWindow({ activeUser, onBack, chatId }) {
     return () => unsubscribe();
   }, [chatId]);
 
-  // 🔹 RESET UNREAD WHEN CHAT OPEN
+  //  RESET UNREAD WHEN CHAT OPEN
   useEffect(() => {
     if (!chatId || !user) return;
-
-    const unreadRef = ref(db, `chats/${chatId}/unread/${user.uid}`);
-    set(unreadRef, 0);
+    set(ref(db, `chats/${chatId}/unread/${user.uid}`), 0);
   }, [chatId, user]);
 
   // 🔹 DELIVERED STATUS
@@ -68,31 +68,35 @@ export default function ChatWindow({ activeUser, onBack, chatId }) {
           ref(db, `chats/${chatId}/messages/${msg.id}/status`),
           "seen"
         );
+        set(
+          ref(db, `chats/${chatId}/messages/${msg.id}/seenAt`),
+          Date.now()
+        );
       }
     });
-  }, [chatId, user, messages]);
+  }, [messages, chatId, user]);
 
   // 🔹 SEEN STATUS
-  useEffect(() => {
-    if (!chatId || !user) return;
+  // useEffect(() => {
+  //   if (!chatId || !user) return;
 
-    messages.forEach((msg) => {
-      if (
-        msg.receiverId === user.uid &&
-        msg.status !== "seen"
-      ) {
-        set(
-        ref(db, `chats/${chatId}/messages/${msg.id}/status`),
-        "seen"
-      );
+  //   messages.forEach((msg) => {
+  //     if (
+  //       msg.receiverId === user.uid &&
+  //       msg.status !== "seen"
+  //     ) {
+  //       set(
+  //       ref(db, `chats/${chatId}/messages/${msg.id}/status`),
+  //       "seen"
+  //     );
 
-      set(
-        ref(db, `chats/${chatId}/messages/${msg.id}/seenAt`),
-        Date.now()
-      );
-      }
-    });
-  }, [messages, chatId, user ]);
+  //     set(
+  //       ref(db, `chats/${chatId}/messages/${msg.id}/seenAt`),
+  //       Date.now()
+  //     );
+  //     }
+  //   });
+  // }, [messages, chatId, user ]);
 
   // 🔹 TYPING INDICATOR
   useEffect(() => {
@@ -101,9 +105,7 @@ export default function ChatWindow({ activeUser, onBack, chatId }) {
     const typingRef = ref(db, `typing/${chatId}`);
 
     const unsub = onValue(typingRef, (snap) => {
-      console.log("TYPING SNAPSHOT:", snap.val());
       const data = snap.val() || {};
-
       const otherTyping = Object.entries(data).some(
         ([uid, isTyping]) => uid !== user.uid && isTyping === true
       );
@@ -113,21 +115,23 @@ export default function ChatWindow({ activeUser, onBack, chatId }) {
     return () => unsub();
   }, [chatId, user]);
 
-  // 🔹 AUTO SCROLL
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
-
+  // wallpaper
   useEffect(() => {
     if (!chatId) return;
 
     const wpRef = ref(db, `chatSettings/${chatId}/wallpaper`);
     return onValue(wpRef, (snap) => {
-      setWallpaper(snap.val() || "default");
+      setWallpaper(snap.val() || null);
     });
   }, [chatId]);
 
-  // ✅ CONDITIONAL RENDER (AFTER ALL HOOKS)
+  // AUTO SCROLL
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+
+  // CONDITIONAL RENDER (AFTER ALL HOOKS)
   if (!activeUser) {
     return (
       <div className="flex-1 flex items-center justify-center text-gray-400">
@@ -137,7 +141,7 @@ export default function ChatWindow({ activeUser, onBack, chatId }) {
   }
 
   return (
-    <div className="flex flex-col flex-1">
+    <div className="flex flex-col h-full">
       {/* Header */}
       <div className="p-4 border-b bg-white dark:bg-gray-900 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -155,25 +159,30 @@ export default function ChatWindow({ activeUser, onBack, chatId }) {
             </p>
           </div>
         </div>
-
         <div className="flex gap-3 text-gray-400 cursor-pointer">
           <span>🔍</span>
           <span>⋮</span>
+          <button
+            onClick={() => setShowWallpaper(true)}
+            className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
+            Change Wallpaper
+          </button>
         </div>
       </div>
 
       {/* Messages */}
       <div
-        className="flex-1 p-4 overflow-y-auto chat-bg-${wallpaper}"
+        className="flex-1 overflow-y-auto px-4 py-6"
         style={{
           backgroundImage: wallpaper ? `url(${wallpaper})` : "none",
           backgroundSize: "cover",
         }}
       >
         {messages.length === 0 && (
-          <p className="text-center text-gray-400 mt-10 ">
+          <div className="h-full flex items-center justify-center text-gray-400">
             No messages yet. Say hi 👋
-          </p>
+          </div>
         )}
 
         {messages.map((msg) => (
@@ -183,7 +192,7 @@ export default function ChatWindow({ activeUser, onBack, chatId }) {
               ...msg,
               sender: msg.senderId === user.uid ? "me" : "other",
             }}
-            chatId={chatId}
+            // chatId={chatId}
           />
         ))}
 
