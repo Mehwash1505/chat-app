@@ -368,7 +368,7 @@ export default function ChatWindow({ activeUser, onBack }) {
 
       {/* MESSAGES */}
       <div
-        className="flex-1 overflow-y-auto px-4 py-6"
+        className="flex-1 overflow-y-auto overflow-x-visible px-4 py-6"
         style={{
           backgroundImage: wallpaper ? `url(${wallpaper})` : "none",
           backgroundSize: "cover",
