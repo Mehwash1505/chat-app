@@ -15,21 +15,21 @@ export const AuthProvider = ({ children }) => {
       setUser(currentUser);
       setLoading(false);
 
-      if (!currentUser) return;
+      if (currentUser) {
+        const userRef = ref(db, `presence/${currentUser.uid}`);
 
-      const userStatusRef = ref(db, `presence/${currentUser.uid}`);
+        // 🔹 ONLINE
+        set(userRef, {
+          online: true,
+          lastSeen: serverTimestamp(),
+        });
 
-      // User online
-      set(userStatusRef, {
-        online: true,
-        lastSeen: serverTimestamp(),
-      });
-
-      // Auto offline on disconnect
-      onDisconnect(userStatusRef).set({
-        online: false,
-        lastSeen: serverTimestamp(),
-      });
+        // 🔹 AUTO OFFLINE (CRITICAL)
+        onDisconnect(userRef).set({
+          online: false,
+          lastSeen: serverTimestamp(),
+        });
+      }
     });
 
     return () => unsubscribe();
