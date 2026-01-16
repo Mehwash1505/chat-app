@@ -29,8 +29,8 @@ export default function ChatPage() {
         />
       </div>
         
-      {/* Chat */}
-      <div className="flex-1">
+      {/* Chat window */}
+      <div className="flex-1 h-full">
         <ChatWindow
           activeUser={activeUser}
           onBack={() => setShowSidebar(true)} // mobile back
