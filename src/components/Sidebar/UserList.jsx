@@ -4,30 +4,26 @@ import { db } from "../../firebase/firebase";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase/firebase";
 import Avatar from "../Avatar";
-import { useAuth } from "../../context/AuthContext";
 
 const users = [
-  
   {
-    id: "5FW4xfEprtWlSLZ4V3nNSnbgH9V2", // Ayesha UID
+    id: "5FW4xfEprtWlSLZ4V3nNSnbgH9V2",
     name: "Ayesha",
   },
   {
-    id: "iweuFomlsDYDb3gjkw9qJdicOAv1", // Rahul UID
+    id: "iweuFomlsDYDb3gjkw9qJdicOAv1",
     name: "Rahul",
   },
   {
     id: "2bdjTZ0eXqdMl2ZbrdGXo8eCWxz1",
-    name:"Zoya"
+    name: "Zoya",
   },
-
 ];
 
 export default function UserList({ activeUser, setActiveUser }) {
   const [presence, setPresence] = useState({});
   const [unread, setUnread] = useState({});
   const [lastMessages, setLastMessages] = useState({});
-
 
   // 🔹 presence (online / offline)
   useEffect(() => {
@@ -40,24 +36,20 @@ export default function UserList({ activeUser, setActiveUser }) {
     return () => unsub();
   }, []);
 
-  // 🔹 unread messages count
+  // 🔹 unread + last message
   useEffect(() => {
     if (!auth.currentUser) return;
 
     const chatsRef = ref(db, "chats");
 
     const unsub = onValue(chatsRef, (snapshot) => {
-      console.log("CHATS SNAPSHOT:", snapshot.val());
       const data = snapshot.val() || {};
       const counts = {};
       const last = {};
 
       Object.entries(data).forEach(([chatId, chat]) => {
-        // unread count directly from DB
         counts[chatId] = chat.unread?.[auth.currentUser.uid] || 0;
-
-        // last message directly from DB
-        last[chatId] = chat.lastMessage;
+        last[chatId] = chat.lastMessage || null;
       });
 
       setUnread(counts);
@@ -66,12 +58,6 @@ export default function UserList({ activeUser, setActiveUser }) {
 
     return () => unsub();
   }, []);
-
-  const toggleMute = async (chatId) => {
-    const refMute = ref(db, `chats/${chatId}/muted/${auth.currentUser.uid}`);
-    const snap = await get(refMute);
-    await set(refMute, !snap.val());
-  };
 
   return (
     <div className="w-64 h-full bg-white dark:bg-gray-900 border-r flex flex-col">
@@ -94,50 +80,46 @@ export default function UserList({ activeUser, setActiveUser }) {
         {users
           .filter((u) => u.id !== auth.currentUser?.uid)
           .map((user) => {
-            const isOnline = presence[user.id]?.online;
             const chatId =
               auth.currentUser &&
               [auth.currentUser.uid, user.id].sort().join("_");
 
             const unreadCount = unread[chatId] || 0;
+            const isOnline = presence[user.id]?.online;
 
             return (
               <div
                 key={user.id}
                 onClick={() => setActiveUser(user)}
-                className={`px-4 py-3 cursor-pointer transition flex justify-between items-center
+                className={`px-4 py-3 cursor-pointer flex justify-between items-center transition
                   ${
                     activeUser?.id === user.id
                       ? "bg-blue-100 dark:bg-gray-800"
                       : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                  }
-                `}
+                  }`}
               >
-                {/* Left side */}
+                {/* Left */}
                 <div className="flex gap-3 items-center">
                   <Avatar name={user.name} />
-
-                  <div>
+                  <div className="min-w-0">
                     <p className="font-medium text-black dark:text-white">
                       {user.name}
                     </p>
-                    <p className="text-xs text-gray-400 truncate">
+                    <p className="text-xs text-gray-400 truncate max-w-[140px]">
                       {lastMessages[chatId]?.text || "No messages yet"}
                     </p>
                   </div>
                 </div>
 
-                {/* Right side */}
+                {/* Right */}
                 <div className="flex flex-col items-end gap-1">
-                  {/* online dot */}
                   <span
                     className={`h-2 w-2 rounded-full ${
                       isOnline ? "bg-green-500" : "bg-gray-400"
                     }`}
                   />
 
-                  {/* unread badge */}
-                  {unreadCount > 0 && !chat?.muted?.[auth.currentUser.uid] && (
+                  {unreadCount > 0 && (
                     <span className="bg-blue-500 text-white text-xs px-2 rounded-full">
                       {unreadCount}
                     </span>
@@ -145,7 +127,7 @@ export default function UserList({ activeUser, setActiveUser }) {
                 </div>
               </div>
             );
-        })}
+          })}
       </div>
     </div>
   );
