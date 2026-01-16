@@ -225,21 +225,22 @@ import Avatar from "../Avatar";
 export default function ChatWindow({ activeUser, onBack }) {
   const { user } = useAuth();
 
-  // ✅ STATES (PROPER)
+  // ✅ ALL STATES AT TOP
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
   const [wallpaper, setWallpaper] = useState(null);
   const [showWallpaper, setShowWallpaper] = useState(false);
+  const [isOnline, setIsOnline] = useState(false);
 
   const bottomRef = useRef(null);
 
-  // ✅ chatId
+  // ✅ chatId (safe)
   const chatId =
     user && activeUser
       ? [user.uid, activeUser.id].sort().join("_")
       : null;
 
-  // 🔹 REALTIME MESSAGES
+  // 🔹 MESSAGES
   useEffect(() => {
     if (!chatId) {
       setMessages([]);
@@ -294,7 +295,7 @@ export default function ChatWindow({ activeUser, onBack }) {
     });
   }, [chatId, user]);
 
-  // 🔹 WALLPAPER (PER USER)
+  // 🔹 WALLPAPER
   useEffect(() => {
     if (!chatId || !user) return;
 
@@ -304,12 +305,27 @@ export default function ChatWindow({ activeUser, onBack }) {
     });
   }, [chatId, user]);
 
+  // 🔹 PRESENCE (⬅️ MOVED UP, VERY IMPORTANT)
+  useEffect(() => {
+    if (!activeUser) {
+      setIsOnline(false);
+      return;
+    }
+
+    const presenceRef = ref(db, `presence/${activeUser.id}`);
+    const unsub = onValue(presenceRef, (snap) => {
+      setIsOnline(snap.val()?.online === true);
+    });
+
+    return () => unsub();
+  }, [activeUser]);
+
   // 🔹 AUTO SCROLL
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ❌ NO CHAT SELECTED
+  // ✅ SAFE CONDITIONAL RENDER (NO HOOKS AFTER THIS)
   if (!activeUser) {
     return (
       <div className="flex-1 flex items-center justify-center text-gray-400">
@@ -323,12 +339,20 @@ export default function ChatWindow({ activeUser, onBack }) {
       {/* HEADER */}
       <div className="p-4 border-b bg-white dark:bg-gray-900 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <button onClick={onBack} className="md:hidden text-gray-400">←</button>
+          <button onClick={onBack} className="md:hidden text-gray-400">
+            ←
+          </button>
           <Avatar name={activeUser.name} />
           <div>
-            <p className="font-semibold text-black dark:text-white">{activeUser.name}</p>
-            <p className="text-xs text-green-500">
-              {typing ? "typing..." : "online"}
+            <p className="font-semibold text-black dark:text-white">
+              {activeUser.name}
+            </p>
+            <p
+              className={`text-xs ${
+                isOnline ? "text-green-500" : "text-gray-400"
+              }`}
+            >
+              {typing ? "typing..." : isOnline ? "online" : "offline"}
             </p>
           </div>
         </div>
@@ -341,34 +365,9 @@ export default function ChatWindow({ activeUser, onBack }) {
         </button>
       </div>
 
-      {/* WALLPAPER MODAL */}
-      {showWallpaper && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-4 w-64">
-            <h3 className="font-semibold mb-3">Select Wallpaper</h3>
-
-            {["none", "https://i.imgur.com/8Km9tLL.png"].map((wp) => (
-              <button
-                key={wp}
-                onClick={() => {
-                  set(
-                    ref(db, `chatSettings/${chatId}/wallpaper/${user.uid}`),
-                    wp === "none" ? null : wp
-                  );
-                  setShowWallpaper(false);
-                }}
-                className="block w-full text-left px-3 py-2 hover:bg-gray-100"
-              >
-                {wp === "none" ? "Default" : "Image"}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* MESSAGES */}
       <div
-        className="flex-1 overflow-y-auto overflow-x-visible px-4 py-6"
+        className="flex-1 overflow-y-auto px-4 py-6"
         style={{
           backgroundImage: wallpaper ? `url(${wallpaper})` : "none",
           backgroundSize: "cover",
