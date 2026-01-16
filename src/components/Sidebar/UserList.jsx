@@ -74,7 +74,7 @@ export default function UserList({ activeUser, setActiveUser }) {
   };
 
   return (
-    <div className="w-64 bg-white dark:bg-gray-900 border-r flex flex-col">
+    <div className="w-64 h-full bg-white dark:bg-gray-900 border-r flex flex-col">
       {/* Header */}
       <div className="p-4 flex justify-between items-center">
         <h2 className="font-semibold text-lg text-black dark:text-white">
