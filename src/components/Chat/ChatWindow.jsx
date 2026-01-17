@@ -4,7 +4,7 @@
 // import { useAuth } from "../../context/AuthContext";
 // import Message from "./Message";
 // import MessageInput from "./MessageInput";
-// import Avatar from "../Avatar";
+// import Avatar from "../Avatar";           
 
 // export default function ChatWindow({ activeUser, onBack }) {
 //   const { user } = useAuth();
