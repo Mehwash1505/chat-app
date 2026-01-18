@@ -6,7 +6,6 @@ import { useAuth } from "../../context/AuthContext";
 export default function Message({ message, chatId }) {
   const { user } = useAuth();
   const isMe = message.sender === "me";
-
   const [menuPos, setMenuPos] = useState(null);
 
   if (message.deletedFor?.[user.uid]) return null;
@@ -18,7 +17,7 @@ export default function Message({ message, chatId }) {
       })
     : "";
 
-  // ✅ DELETE FOR ME
+  // DELETE FOR ME
   const deleteForMe = async () => {
     await set(
       ref(
@@ -100,10 +99,16 @@ export default function Message({ message, chatId }) {
           {/* ticks */}
           {isMe && !message.deleted && (
             <div className="text-xs text-right mt-1">
-              {message.status === "sent" && "✔"}
-              {message.status === "delivered" && "✔✔"}
+              {message.status === "sent" && (
+                <span className="text-gray-400">✔</span>
+              )}
+
+              {message.status === "delivered" && (
+                <span className="text-gray-400">✔✔</span>
+              )}
+
               {message.status === "seen" && (
-                <span className="text-blue-200">✔✔</span>
+                <span className="text-blue-500">✔✔</span>
               )}
             </div>
           )}
