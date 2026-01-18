@@ -17,5 +17,5 @@ export default function LoginPage({ switchToSignup }) {
       </div>
     </div>
   );
-}
+} 
 
