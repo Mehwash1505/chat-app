@@ -25,7 +25,7 @@ export default function Message({ message, chatId }) {
         `chats/${chatId}/messages/${message.id}/deletedFor/${user.uid}`
       ),
       true
-    );
+    ); 
   };
 
   // ✅ DELETE FOR EVERYONE
