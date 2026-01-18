@@ -14,7 +14,7 @@ export default function ChatPage() {
         <h2>Please login to continue</h2>
       </div>
     );
-  }
+  } 
  
   return (
     <div className="flex h-screen overfliw-hidden">
