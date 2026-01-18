@@ -33,7 +33,7 @@ export default function MessageInput({ chatId, receiverId }) {
       text,
       senderId: user.uid,
       timestamp: Date.now(),
-    });
+    }); 
 
     // 3️⃣ increment unread count (safe way)
     const unreadRef = ref(db, `chats/${chatId}/unread/${receiverId}`);
