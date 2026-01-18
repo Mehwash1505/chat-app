@@ -3,6 +3,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase/firebase";
 import { ref, set, onDisconnect, serverTimestamp } from "firebase/database";
 import { db } from "../firebase/firebase";
+import { onValue } from "firebase/database";
 
 const AuthContext = createContext();
 
@@ -34,6 +35,7 @@ export const AuthProvider = ({ children }) => {
 
     return () => unsubscribe();
   }, []);
+
 
   return (
     <AuthContext.Provider value={{ user }}>
