@@ -282,7 +282,7 @@ export default function ChatWindow({ activeUser, onBack }) {
               "delivered"
             );
           }
-        });
+        }); 
       });
   }, [chatId, user, activeUser, messages]);
 
