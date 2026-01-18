@@ -213,7 +213,6 @@
 //   );
 // }
 
-
 import { useEffect, useState, useRef } from "react";
 import { ref, onValue, set } from "firebase/database";
 import { db } from "../../firebase/firebase";
@@ -225,7 +224,7 @@ import Avatar from "../Avatar";
 export default function ChatWindow({ activeUser, onBack }) {
   const { user } = useAuth();
 
-  // ✅ ALL STATES AT TOP
+  // ALL STATES AT TOP
   const [messages, setMessages] = useState([]);
   const [typing, setTyping] = useState(false);
   const [wallpaper, setWallpaper] = useState(null);
@@ -234,7 +233,7 @@ export default function ChatWindow({ activeUser, onBack }) {
 
   const bottomRef = useRef(null);
 
-  // ✅ chatId (safe)
+  // chatId (safe)
   const chatId =
     user && activeUser
       ? [user.uid, activeUser.id].sort().join("_")
@@ -263,25 +262,60 @@ export default function ChatWindow({ activeUser, onBack }) {
     });
   }, [chatId]);
 
-  // 🔹 RESET UNREAD
+  // ✅ DELIVERED STATUS (GLOBAL – VERY IMPORTANT)
+    useEffect(() => {
+      if (!chatId || !user || !activeUser) return;
+
+      const presenceRef = ref(db, `presence/${activeUser.id}`);
+
+      return onValue(presenceRef, (snap) => {
+        const receiverOnline = snap.val()?.online === true;
+        if (!receiverOnline) return;
+      
+        messages.forEach((msg) => {
+          if (
+            msg.senderId === user.uid &&
+            msg.status === "sent"
+          ) {
+            set(
+              ref(db, `chats/${chatId}/messages/${msg.id}/status`),
+              "delivered"
+            );
+          }
+        });
+      });
+  }, [chatId, user, activeUser, messages]);
+
+  // RESET UNREAD
   useEffect(() => {
     if (!chatId || !user) return;
     set(ref(db, `chats/${chatId}/unread/${user.uid}`), 0);
   }, [chatId, user]);
 
-  // 🔹 SEEN STATUS
+  // SEEN STATUS
   useEffect(() => {
-    if (!chatId || !user) return;
+    if (!chatId || !user || !activeUser) return;
 
     messages.forEach((msg) => {
-      if (msg.receiverId === user.uid && msg.status !== "seen") {
-        set(ref(db, `chats/${chatId}/messages/${msg.id}/status`), "seen");
-        set(ref(db, `chats/${chatId}/messages/${msg.id}/seenAt`), Date.now());
+      // ONLY mark seen if:   1. I am receiver  2. Message is delivered
+      if (
+        msg.receiverId === user.uid &&
+        msg.status === "delivered"
+      ) {
+        set(
+          ref(db, `chats/${chatId}/messages/${msg.id}/status`),
+          "seen"
+        );
+
+        set(
+          ref(db, `chats/${chatId}/messages/${msg.id}/seenAt`),
+          Date.now()
+        );
       }
     });
-  }, [messages, chatId, user]);
+  }, [ chatId, user, activeUser]);
 
-  // 🔹 TYPING
+  // TYPING
   useEffect(() => {
     if (!chatId || !user) return;
 
@@ -295,7 +329,7 @@ export default function ChatWindow({ activeUser, onBack }) {
     });
   }, [chatId, user]);
 
-  // 🔹 WALLPAPER
+  // WALLPAPER
   useEffect(() => {
     if (!chatId || !user) return;
 
@@ -305,7 +339,7 @@ export default function ChatWindow({ activeUser, onBack }) {
     });
   }, [chatId, user]);
 
-  // 🔹 PRESENCE (⬅️ MOVED UP, VERY IMPORTANT)
+  // PRESENCE
   useEffect(() => {
     if (!activeUser) {
       setIsOnline(false);
@@ -320,12 +354,12 @@ export default function ChatWindow({ activeUser, onBack }) {
     return () => unsub();
   }, [activeUser]);
 
-  // 🔹 AUTO SCROLL
+  // AUTO SCROLL
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ✅ SAFE CONDITIONAL RENDER (NO HOOKS AFTER THIS)
+  // SAFE CONDITIONAL RENDER (NO HOOKS AFTER THIS)
   if (!activeUser) {
     return (
       <div className="flex-1 flex items-center justify-center text-gray-400">
@@ -339,16 +373,12 @@ export default function ChatWindow({ activeUser, onBack }) {
       {/* HEADER */}
       <div className="p-4 border-b bg-white dark:bg-gray-900 flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <button onClick={onBack} className="md:hidden text-gray-400">
-            ←
-          </button>
+          <button onClick={onBack} className="md:hidden text-gray-400">←</button>
           <Avatar name={activeUser.name} />
           <div>
-            <p className="font-semibold text-black dark:text-white">
-              {activeUser.name}
-            </p>
+            <p className="font-semibold text-black dark:text-white">{activeUser.name}</p>
             <p
-              className={`text-xs ${
+             className={`text-xs ${
                 isOnline ? "text-green-500" : "text-gray-400"
               }`}
             >
