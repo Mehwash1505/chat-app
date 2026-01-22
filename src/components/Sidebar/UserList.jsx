@@ -6,7 +6,7 @@ import { auth } from "../../firebase/firebase";
 import Avatar from "../Avatar";
 
 const users = [
-  {
+  { 
     id: "5FW4xfEprtWlSLZ4V3nNSnbgH9V2",
     name: "Ayesha",
   },
