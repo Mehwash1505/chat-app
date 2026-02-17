@@ -1,4 +1,4 @@
-// MessageInput.jsx
+// src/components/Chat/MessageInput.jsx
 import { useState, useRef } from "react";
 import { ref, set, push, get } from "firebase/database";
 import { db } from "../../firebase/firebase";
