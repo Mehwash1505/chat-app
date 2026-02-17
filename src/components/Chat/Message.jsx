@@ -1,4 +1,4 @@
-// Message.jsx
+// src/components/Chat/Message.jsx
 import { useState } from "react";
 import { ref, set, remove } from "firebase/database";
 import { db } from "../../firebase/firebase";
