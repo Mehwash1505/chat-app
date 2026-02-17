@@ -1,4 +1,4 @@
-// ChatWindow.jsx
+// src/components/Chat/ChatWindow.jsx
 // import { useEffect, useState, useRef } from "react";
 // import { ref, onValue, set } from "firebase/database";
 // import { db } from "../../firebase/firebase";
