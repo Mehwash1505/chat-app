@@ -1,3 +1,4 @@
+// src/pages/SignupPage.jsx
 import Signup from "../components/Auth/Signup";
 
 export default function SignupPage({ switchToLogin }) {
