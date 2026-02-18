@@ -1,3 +1,4 @@
+// src/pages/ChatPage.jsx
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import UserList from "../components/Sidebar/UserList";
